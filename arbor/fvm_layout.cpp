@@ -227,7 +227,6 @@ fvm_discretization fvm_discretize(const std::vector<cable_cell>& cells, const ca
 
     D.ncell = cells.size();
     D.ncv = cell_cv_part.bounds().second;
-    std::cout << "ncv = " << D.ncv << std::endl;
 
     D.face_conductance.assign(D.ncv, 0.);
     D.cv_area.assign(D.ncv, 0.);
@@ -292,11 +291,6 @@ fvm_discretization fvm_discretize(const std::vector<cable_cell>& cells, const ca
         auto init_vm = (soma->parameters.init_membrane_potential | init_vm_default).value(); // [mV]
         auto temp = (soma->parameters.temperature_K | temp_default).value(); // [mV]
 
-        D.cv_area[soma_cv] = soma_area;                 // [µm²]
-        D.cv_capacitance[soma_cv] = soma_area*soma_cm;  // [pF]
-        D.init_membrane_potential[soma_cv] += soma_area*init_vm; // [mV·µm²]
-        D.temperature_K[soma_cv] += soma_area*temp;     // [K·µm²]
-
         soma_info.proximal_cv = soma_cv;
         soma_info.distal_cv = soma_cv;
         soma_info.distal_cv_area = soma_area;
@@ -323,14 +317,12 @@ fvm_discretization fvm_discretize(const std::vector<cable_cell>& cells, const ca
 
             bool soma_child = c.parent(j)->as_soma() ? true : false; //segment's parent is a soma
 
-            std::cout << "soma r = " << soma->radius() << " ; soma_child = " <<  soma_child << std::endl;
-
             auto radii = cable->radii();
             auto lengths = cable->lengths();
 
             if(soma_child) {
                 radii.insert(radii.begin(), soma->radius());
-                lengths.insert(lengths.begin(), soma->radius() * 2);
+                lengths.insert(lengths.begin(), soma->radius()*2);
             }
 
             auto divs = div_compartment_integrator(ncv, radii, lengths, soma_child);
@@ -383,7 +375,11 @@ fvm_discretization fvm_discretize(const std::vector<cable_cell>& cells, const ca
                 D.temperature_K[i] += ar*temp;   // [K·µm²]
             }
         }
-        std::cout << std::endl;
+
+        D.cv_area[soma_cv] = soma_area;                 // [µm²]
+        D.cv_capacitance[soma_cv] = soma_area*soma_cm;  // [pF]
+        D.init_membrane_potential[soma_cv] += soma_area*init_vm; // [mV·µm²]
+        D.temperature_K[soma_cv] += soma_area*temp;     // [K·µm²]
     }
 
     // Rescale CV init_vm and temperature values to get area-weighted means.
