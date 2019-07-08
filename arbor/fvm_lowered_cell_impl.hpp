@@ -267,7 +267,7 @@ fvm_integration_result fvm_lowered_cell_impl<Backend>::integrate(
         PE(advance_integrate_ionupdate);
         update_ion_state();
         PL();
-
+        std::cout << *state_;
         // Update time and test for spike threshold crossings.
 
         PE(advance_integrate_threshold);
