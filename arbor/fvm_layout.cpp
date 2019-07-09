@@ -381,16 +381,12 @@ fvm_discretization fvm_discretize(const std::vector<cable_cell>& cells, const ca
         D.cv_capacitance[soma_cv] = soma_area*soma_cm;  // [pF]
         D.init_membrane_potential[soma_cv] = soma_area*init_vm; // [mV·µm²]
         D.temperature_K[soma_cv] = soma_area*temp;     // [K·µm²]
-        std::cout << soma_cv << " " << init_vm <<  " "<< soma_area << std::endl;
     }
 
     // Rescale CV init_vm and temperature values to get area-weighted means.
     for (auto i: make_span(0, D.ncv)) {
         if (D.cv_area[i]) {
             D.init_membrane_potential[i] /= D.cv_area[i]; // [mV]
-            if (i==0)
-                std::cout << D.init_membrane_potential[i] << " " << D.cv_area[i] << std::endl;
-
             D.temperature_K[i] /= D.cv_area[i]; // [mV]
         }
     }
