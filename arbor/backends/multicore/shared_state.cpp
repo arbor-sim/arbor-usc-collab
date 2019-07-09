@@ -247,9 +247,9 @@ std::ostream& operator<<(std::ostream& out, const shared_state& s) {
     for (const auto& ki: s.ion_data) {
         auto& kn = ki.first;
         auto& i = const_cast<ion_state&>(ki.second);
-        if (kn == "sk") {
-            out << csv(i.iX_) << ",\n";
-        }
+//        if (kn == "sk") {
+//            out << csv(i.iX_) << ",\n";
+//        }
 //        out << kn << "/reversal_potential     " << csv(i.eX_) << "\n";
 //        out << kn << "/internal_concentration " << csv(i.Xi_) << "\n";
 //        out << kn << "/external_concentration " << csv(i.Xo_) << "\n";
