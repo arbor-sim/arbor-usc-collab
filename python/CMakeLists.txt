@@ -23,10 +23,12 @@ add_library(pyarb MODULE
     event_generator.cpp
     identifiers.cpp
     mpi.cpp
+    profiler.cpp
     pyarb.cpp
     recipe.cpp
-    simulation.cpp
     schedule.cpp
+    simulation.cpp
+    spikes.cpp
 )
 
 target_link_libraries(pyarb PRIVATE arbor pybind11::module)

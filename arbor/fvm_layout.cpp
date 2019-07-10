@@ -402,7 +402,7 @@ fvm_mechanism_data fvm_build_mechanism_data(const cable_cell_global_properties& 
     struct density_mech_data {
         std::vector<std::pair<size_type, const mechanism_desc*>> segments;
         string_set paramset;
-        const mechanism_info* info = nullptr;
+        std::shared_ptr<mechanism_info> info = nullptr;
     };
     std::unordered_map<std::string, density_mech_data> density_mech_table;
 
@@ -414,7 +414,7 @@ fvm_mechanism_data fvm_build_mechanism_data(const cable_cell_global_properties& 
     struct revpot_mech_data {
         std::map<size_type, const mechanism_desc*> cells;
         string_set paramset;
-        const mechanism_info* info = nullptr;
+        std::shared_ptr<mechanism_info> info = nullptr;
     };
     std::unordered_map<std::string, revpot_mech_data> revpot_mech_table;
 
@@ -431,7 +431,7 @@ fvm_mechanism_data fvm_build_mechanism_data(const cable_cell_global_properties& 
         };
         std::vector<point_data> points;
         string_set paramset;
-        const mechanism_info* info = nullptr;
+        std::shared_ptr<mechanism_info> info = nullptr;
     };
     std::unordered_map<std::string, point_mech_data> point_mech_table;
 
@@ -486,12 +486,12 @@ fvm_mechanism_data fvm_build_mechanism_data(const cable_cell_global_properties& 
 
     auto update_paramset_and_validate =
         [&catalogue,&verify_ion_usage]
-        (const mechanism_desc& desc, const mechanism_info*& info, string_set& paramset)
+        (const mechanism_desc& desc, std::shared_ptr<mechanism_info>& info, string_set& paramset)
     {
         auto& name = desc.name();
         if (!info) {
-            info = &catalogue[name];
-            verify_ion_usage(name, info);
+            info.reset(new mechanism_info(catalogue[name]));
+            verify_ion_usage(name, info.get());
         }
         for (const auto& pv: desc.values()) {
             if (!paramset.count(pv.first)) {
@@ -724,7 +724,7 @@ fvm_mechanism_data fvm_build_mechanism_data(const cable_cell_global_properties& 
         fvm_mechanism_config& config = mechdata.mechanisms[name];
         config.kind = mechanismKind::revpot;
 
-        auto nparam = build_param_data(entry.second.paramset, entry.second.info);
+        auto nparam = build_param_data(entry.second.paramset, &info);
         config.param_values.resize(nparam);
         for (auto pidx: make_span(nparam)) {
             config.param_values[pidx].first = param_name[pidx];
@@ -788,7 +788,7 @@ fvm_mechanism_data fvm_build_mechanism_data(const cable_cell_global_properties& 
         fvm_mechanism_config& config = mechdata.mechanisms[name];
         config.kind = mechanismKind::density;
 
-        auto nparam = build_param_data(entry.second.paramset, entry.second.info);
+        auto nparam = build_param_data(entry.second.paramset, entry.second.info.get());
 
         // In order to properly account for partially overriden parameters in CVs
         // that are shared between segments, we need to track not only the area-weighted
@@ -850,7 +850,7 @@ fvm_mechanism_data fvm_build_mechanism_data(const cable_cell_global_properties& 
         const std::string& name = entry.first;
         const auto& points = entry.second.points;
 
-        auto nparam = build_param_data(entry.second.paramset, entry.second.info);
+        auto nparam = build_param_data(entry.second.paramset, entry.second.info.get());
         std::vector<std::vector<value_type>> param_value(nparam);
 
         // Permute points in this mechanism so that they are in increasing CV order;
