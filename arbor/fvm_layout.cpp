@@ -341,10 +341,14 @@ fvm_discretization fvm_discretize(const std::vector<cable_cell>& cells, const ca
                 [&D](const segment_info& seg_info) {
                     return seg_info.distal_cv;
                 });
-            if (!opt_index) {
+            if (!opt_index && !soma_parent) {
                 throw arbor_internal_error("fvm_layout: could not find parent segment");
             }
-            D.parent_segment.push_back(*opt_index);
+            if (!soma_parent) {
+                D.parent_segment.push_back(*opt_index);
+            } else {
+                D.parent_segment.push_back(j);
+            }
 
             auto first = seg_cv_ival.first;
             auto second = seg_cv_ival.second;
