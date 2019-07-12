@@ -232,31 +232,28 @@ void shared_state::take_samples(
 std::ostream& operator<<(std::ostream& out, const shared_state& s) {
     using io::csv;
 
-//    out << "n_intdom     " << s.n_intdom << "\n";
-//    out << "n_cv         " << s.n_cv << "\n";
-//    out << "cv_to_intdom " << csv(s.cv_to_intdom) << "\n";
-//    out << "time         " << csv(s.time) << "\n";
-//    out << "time_to      " << csv(s.time_to) << "\n";
-//    out << "dt_intdom    " << csv(s.dt_intdom) << "\n";
-//    out << "dt_cv        " << csv(s.dt_cv) << "\n";
-//    out << "voltage      " << csv(s.voltage) << "\n";
-//    out << "init_voltage " << csv(s.init_voltage) << "\n";
-//    out << "temperature  " << csv(s.temperature_degC) << "\n";
-//    out << "current      " << csv(s.current_density) << "\n";
-//    out << "conductivity " << csv(s.conductivity) << "\n";
+    out << "n_intdom     " << s.n_intdom << "\n";
+    out << "n_cv         " << s.n_cv << "\n";
+    out << "cv_to_intdom " << csv(s.cv_to_intdom) << "\n";
+    out << "time         " << csv(s.time) << "\n";
+    out << "time_to      " << csv(s.time_to) << "\n";
+    out << "dt_intdom    " << csv(s.dt_intdom) << "\n";
+    out << "dt_cv        " << csv(s.dt_cv) << "\n";
+    out << "voltage      " << csv(s.voltage) << "\n";
+    out << "init_voltage " << csv(s.init_voltage) << "\n";
+    out << "temperature  " << csv(s.temperature_degC) << "\n";
+    out << "current      " << csv(s.current_density) << "\n";
+    out << "conductivity " << csv(s.conductivity) << "\n";
     for (const auto& ki: s.ion_data) {
         auto& kn = ki.first;
         auto& i = const_cast<ion_state&>(ki.second);
-//        if (kn == "sk") {
-//            out << csv(i.iX_) << ",\n";
-//        }
-//        out << kn << "/reversal_potential     " << csv(i.eX_) << "\n";
-//        out << kn << "/internal_concentration " << csv(i.Xi_) << "\n";
-//        out << kn << "/external_concentration " << csv(i.Xo_) << "\n";
-//        out << kn << "/intconc_initial        " << csv(i.init_Xi_) << "\n";
-//        out << kn << "/extconc_initial        " << csv(i.init_Xo_) << "\n";
-//        out << kn << "/revpot_initial         " << csv(i.init_eX_) << "\n";
-//        out << kn << "/node_index             " << csv(i.node_index_) << "\n";
+        out << kn << "/reversal_potential     " << csv(i.eX_) << "\n";
+        out << kn << "/internal_concentration " << csv(i.Xi_) << "\n";
+        out << kn << "/external_concentration " << csv(i.Xo_) << "\n";
+        out << kn << "/intconc_initial        " << csv(i.init_Xi_) << "\n";
+        out << kn << "/extconc_initial        " << csv(i.init_Xo_) << "\n";
+        out << kn << "/revpot_initial         " << csv(i.init_eX_) << "\n";
+        out << kn << "/node_index             " << csv(i.node_index_) << "\n";
     }
 
     return out;
